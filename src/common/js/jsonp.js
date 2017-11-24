@@ -1,9 +1,9 @@
 import originJSONP from 'jsonp'
 
 /*封装一个jsonp(url,opts(param就是定义的一个数据名;timeout超时；prefix就是可以等于某个东西；name就是全局注册的放发名),fn)的通用方法*/
-/*这里的data是为了拼接url,这是一个拼接url的技巧*/
+/*这里的data是为了拼接url的数据,这是一个拼接url的技巧*/
 export default function jsonp(url,data,option){
-	url+=(url.indexOf("?")<0? "?":"&")+param(data)
+	url+=(url.indexOf("?")<0? "?":"&")+param(data);
 	return new Promise((resolve,reject)=>{
 		originJSONP(url,option,(err,data)=>{
 			if(!err){
