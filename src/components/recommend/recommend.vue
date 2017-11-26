@@ -47,7 +47,7 @@ import {ERR_OK} from "api/config"
       _getDiscList(){
         getDiscList().then((res)=>{
           if(res.code===ERR_OK){
-            console.log(res.data)
+            console.log(res.data.list)
           }
         })
       }
