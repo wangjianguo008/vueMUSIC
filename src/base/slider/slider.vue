@@ -57,6 +57,10 @@ import {addClass} from "common/js/dom"
         this.slider.refresh()//刷新better-scroll的方法
       })
     },
+    /*优化就是编程习惯 有定时器的时候最好在最后将他销毁，有利于内存的释放*/
+    destroyed(){
+      clearTimeout(this.timer)
+    },
     methods:{
       /*获取每个图的宽度的方法*/
       _setSliderWidth(isResize){
@@ -85,11 +89,18 @@ import {addClass} from "common/js/dom"
           scrollX:true,/*横向滚动*/
           scrollY:false,/*竖向不滚动*/
           momentum:false, /*当快速滑动时是否开启滑动惯性*/
-          snap: true, /*该属性是给 slider 组件使用的，普通的列表滚动不需要配置*/
-          snapLoop:this.loop,/*循环*/
-          snapThreshold: 0.3, /*用手指滑动时页面可切换的阈值，大于这个阈值可以滑动的下一页*/
-          snapSpeed:400/*滑动的速度*/
-          /*click:true去掉了否则手机无法点击（反正是手机端）*/
+          snap: {
+            loop: this.loop,
+            threshold: 0.3,
+            speed: 400
+          },
+          click: this.click
+          /*better-scroll这是1.0之前的写法*/
+          /*snap: true, 该属性是给 slider 组件使用的，普通的列表滚动不需要配置
+          snapLoop:this.loop,循环
+          snapThreshold: 0.3, 用手指滑动时页面可切换的阈值，大于这个阈值可以滑动的下一页
+          snapSpeed:400滑动的速度
+          click:true去掉了否则手机无法点击（反正是手机端）*/
         })
         /*每次在滚动完毕后，会有一个scrollEND事件，getCurrentPage()获得当前页面，better-scroll方法*/
         this.slider.on("scrollEnd",()=>{

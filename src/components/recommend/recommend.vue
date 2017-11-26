@@ -22,7 +22,7 @@
 
 <script>
 import Slider from "base/slider/slider"
-import {getRecomment} from "api/recommend"
+import {getRecomment,getDiscList} from "api/recommend"
 import {ERR_OK} from "api/config"
   export default{
     data(){
@@ -31,7 +31,8 @@ import {ERR_OK} from "api/config"
       }
     },
   	created(){
-  		this._getRecomment()
+  		this._getRecomment()//轮播数据
+      this._getDiscList()//歌单数据
   	},
   	methods:{
   		/*获取轮播的数据*/
@@ -42,7 +43,14 @@ import {ERR_OK} from "api/config"
   					this.recommends=res.data.slider
   				}
   			})
-  		}
+  		},
+      _getDiscList(){
+        getDiscList().then((res)=>{
+          if(res.code===ERR_OK){
+            console.log(res.data)
+          }
+        })
+      }
   	},
     components:{
       Slider

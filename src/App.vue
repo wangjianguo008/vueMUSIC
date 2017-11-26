@@ -2,7 +2,10 @@
   <div id="app">
     <MHeader></MHeader>
     <Tab></Tab>
-    <router-view></router-view>
+    <!--keep-alive主要是解决切换时不会刷新页面，会保持之前的状态-->
+    <keep-alive>
+    	<router-view></router-view>
+    </keep-alive>
   </div>
 </template>
 
