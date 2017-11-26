@@ -14,9 +14,9 @@ export function getRecomment(){
 	return jsonp(url,data,options)
 }
 
-/*获取歌单的数据*/
+/*获取歌单的数据*//*获取不到数据，因为host引起，找不到路劲，方法使用后台axios*/
 export function getDiscList(){
-	const url="https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_tag_conf.fcg";
+	const url="https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg";
 	const data=Object.assign({},commonParams,{
 		platform: 'yqq',
 	    hostUin: 0,
@@ -25,8 +25,7 @@ export function getDiscList(){
 	    sortId: 5,
 	    needNewCode: 0,
 	    categoryId: 10000000,
-	    rnd: Math.random(),
-	    format: 'jsonp'
+	    rnd: Math.random()
 	})
 	return jsonp(url,data,options)
 }
