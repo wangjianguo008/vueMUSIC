@@ -10,7 +10,8 @@
           <Slider>
             <div v-for="item in recommends">
               <a :href="item.linkUrl">
-                <img :src="item.picUrl" @load="loadImgage">
+                <!--fastclick是npm模块绑定在body身上，现在监听到needClick时候才会有点击效果-->
+                <img class="needClick" :src="item.picUrl" @load="loadImgage">
               </a>
             </div>
           </Slider>
@@ -20,7 +21,8 @@
           <ul>
             <li class="item" v-for="item in discList">
               <div class="icon">
-                <img :src="item.imgurl" width="60" height="60">
+                <!--:src="item.imgurl"这是赖加载模块的功能-->
+                <img  width="60" height="60" v-lazy="item.imgurl">
               </div>
               <!--v-html就是转易，防止有代码-->
               <div class="text">
@@ -29,6 +31,9 @@
               </div>
             </li>
           </ul>
+        </div>
+        <div class="loading-container" v-show="!discList.length">
+          <Loading></Loading>
         </div>
       </div>
     </Scroll>
@@ -40,6 +45,7 @@ import Slider from "base/slider/slider"
 import {getRecomment,getDiscList} from "api/recommend"
 import {ERR_OK} from "api/config"
 import Scroll from "base/scroll/scroll"
+import Loading from "base/loading/loading"
   export default{
     data(){
       return {
@@ -51,6 +57,9 @@ import Scroll from "base/scroll/scroll"
      /* setTimeout(()=>{
         this._getRecomment()
       },5000)*///测试滚动
+      /*setTimeout(()=>{
+        this._getDiscList()
+      },6000)*///测试loading
   		this._getRecomment()//轮播数据
       this._getDiscList()//歌单数据
   	},
@@ -82,7 +91,8 @@ import Scroll from "base/scroll/scroll"
   	},
     components:{
       Slider,
-      Scroll
+      Scroll,
+      Loading
     }
   }
 </script>
@@ -135,6 +145,6 @@ import Scroll from "base/scroll/scroll"
       .loading-container
         position: absolute
         width: 100%
-        top: 50%
-        transform: translateY(-50%)
+        top: 100%
+        //transform: translateY(-50%)
 </style>
