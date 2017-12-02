@@ -1,6 +1,6 @@
 <!-- 这是一个类似于通讯录的组件 -->
 <template>
-    <Scroll class="listview" :data="data" ref="listview">
+    <Scroll class="listview" :data="data" ref="listview" :listenScroll="listenScroll" @scroll="scroll" :probeType="probeType">
       <!--歌手这个循环是头部标题的循环-->
       <ul>
         <li class="list-group" v-for="group in data"ref="listGroup">
@@ -18,7 +18,7 @@
       <div class="list-shortcut" @touchstart.stop.prevent="onShortcutTouchStart" @touchmove.stop.prevent="onShortcutTouchMove">
         <ul>
           <!--为了获取索引才使用index-->
-          <li class="item" v-for="(item,index) in shortcutList" :data-index="index">
+          <li class="item" v-for="(item,index) in shortcutList" :data-index="index" :class="{'current':currentIndex===index}">
             {{item}}
           </li>
         </ul>
@@ -34,11 +34,20 @@ const ANCHOR_HEIGHT=18//每个字的大小和padding加在一起的高度
   created(){
     /*onShortcutTouchStart和onShortcutTouchMove创建一个公用的的，可以调用的object,不在data中建立，因为data中有get和set的方法*/
     this.touch={}
+    this.listenScroll = true,//可以派发滚动事件
+    this.listHeight = []//默认
+    this.probeType=3//在3的情况下就可以发生依次下拉数据
   },
   props:{
     data:{
       type:Array,
       default:[]
+    }
+  },
+  data(){
+    return {
+      scrollY: -1,//观测一个y轴，初始化一个上线
+      currentIndex: 0// 当前对第几个高亮
     }
   },
   /*计算右侧距离*/
@@ -66,10 +75,68 @@ const ANCHOR_HEIGHT=18//每个字的大小和padding加在一起的高度
         let anchorIndex =parseInt(this.touch.anchorIndex)+delta
         this._scrollTo(anchorIndex)
       },
-      _scrollTo(anchorIndex){
+      _scrollTo(index){
+        /*到上线的一个位置*/
+        //console.log(index)
+        if (!index && index !== 0) {
+          return
+        }
+        if (index < 0) {
+          index = 0
+        } else if (index > this.listHeight.length - 2) {
+          index = this.listHeight.length - 2
+        }
+        this.scrollY = -this.listHeight[index]
          /*左侧对应的索引，滚动到对应的element*/
-        this.$refs.listview.scrollToElement(this.$refs.listGroup[anchorIndex],0)
+        this.$refs.listview.scrollToElement(this.$refs.listGroup[index],0)
+      },
+      scroll(pos){
+        /*为了监听到better-scroll的y距离*/
+        this.scrollY=pos.y
+      },
+      /*计算高度看每区间group的高度，对应高亮*/
+      _calculateHeight(){
+        this.listHeight=[]
+        /*获取有多少group*/
+        const list=this.$refs.listGroup
+        let height=0
+        this.listHeight.push(height)//第一组的高度就是0
+        for(var i=0;i<list.length;i++){
+          let item=list[i]
+          /*由于是dom元素所以可以使用clientHeight获得高*/
+          height+=item.clientHeight
+          this.listHeight.push(height)//每一个group的高度算出来
+        }
       }
+  },
+  watch:{
+    /*只有data发生了变化_calculateHeight才可以计算*/
+    data(){
+      setTimeout(()=>{
+        this._calculateHeight()
+      },20)
+    },
+    scrollY(newY){
+      const listHeight=this.listHeight
+      // 当滚动到顶部，newY>0
+      if(newY>0){
+        this.currentIndex=0
+        return
+      }
+      // 在中间部分滚动listHeight.length-1因为better-scroll有上下限
+      for(let i=0;i<listHeight.length-1;i++){
+        let height1=listHeight[i]
+        let height2=listHeight[i+1]
+        /*往下走y轴是负数*/
+        if(-newY>=height1&&-newY<height2){
+          this.currentIndex=i
+          //console.log(this.currentIndex)
+          return 
+        }
+      }
+      // 当滚动到底部，且-newY大于最后一个元素的上限
+      this.currentIndex=listHeight.length-2
+    }
   },
   components:{
     Scroll

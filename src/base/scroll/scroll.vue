@@ -20,6 +20,10 @@ import BScroll from 'better-scroll'
       data:{//数据改变，为了refresh()
         type:Array,
         default:null
+      },
+      listenScroll:{//监听list需要滚动不
+        type:Boolean,
+        default:false
       }
     },
     mounted(){
@@ -37,6 +41,13 @@ import BScroll from 'better-scroll'
           probeType:this.probeType,
           click:this.click
         })
+        /*监听歌单的是不是有滚动事件,$emit这是子传父*/
+        if(this.listenScroll){
+          let that=this
+          this.scroll.on("scroll",(pos)=>{//位置pos有x和y的属性
+            that.$emit('scroll',pos)
+          })
+        }
       },
       /*以下就是better-scroll代理，就是将方法套用了下,this.scroll是指向better-scroll的实例*/
       enable(){//允许
