@@ -23,13 +23,21 @@
           </li>
         </ul>
       </div>
+      <div class="list-fixed" v-show="fixedTitle" ref="fixed">
+        <h1 class="fixed-title">{{fixedTitle}}</h1>
+      </div>
+      <div v-show="!data.length" class="loading-container">
+      <Loading></Loading>
+    </div>
     </Scroll>
 </template>
 
 <script>
 import Scroll from "base/scroll/scroll"
 import {getData} from "common/js/dom"
+import Loading from 'base/loading/loading'
 const ANCHOR_HEIGHT=18//每个字的大小和padding加在一起的高度
+const TITLE_HEIGHT = 30//这是title的高度
  export default{
   created(){
     /*onShortcutTouchStart和onShortcutTouchMove创建一个公用的的，可以调用的object,不在data中建立，因为data中有get和set的方法*/
@@ -47,7 +55,8 @@ const ANCHOR_HEIGHT=18//每个字的大小和padding加在一起的高度
   data(){
     return {
       scrollY: -1,//观测一个y轴，初始化一个上线
-      currentIndex: 0// 当前对第几个高亮
+      currentIndex: 0,// 当前对第几个高亮
+      diff: -1//上线于下线的差
     }
   },
   /*计算右侧距离*/
@@ -57,6 +66,12 @@ const ANCHOR_HEIGHT=18//每个字的大小和padding加在一起的高度
       return this.data.map((group)=>{
         return group.title.substr(0,1)
       })
+    },
+    fixedTitle(){
+      if(this.scrollY>0){
+        return ""
+      }
+      return this.data[this.currentIndex]?this.data[this.currentIndex].title : ""
     }
   },
   methods:{
@@ -130,16 +145,26 @@ const ANCHOR_HEIGHT=18//每个字的大小和padding加在一起的高度
         /*往下走y轴是负数*/
         if(-newY>=height1&&-newY<height2){
           this.currentIndex=i
+          this.diff=height2+newY//就是dom之间的高度距离
           //console.log(this.currentIndex)
           return 
         }
       }
       // 当滚动到底部，且-newY大于最后一个元素的上限
       this.currentIndex=listHeight.length-2
+    },
+    diff(newVal){
+      let fixedTop=(newVal>0&&newVal<TITLE_HEIGHT)? newVal-TITLE_HEIGHT : 0
+      if(this.fixedTop===fixedTop){
+        return
+      }
+      this.fixedTop=fixedTop
+      this.$refs.fixed.style.transform = `translate3d(0,${fixedTop}px,0)`
     }
   },
   components:{
-    Scroll
+    Scroll,
+    Loading
   }
  }
 </script>
