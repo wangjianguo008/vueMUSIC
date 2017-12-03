@@ -4,6 +4,7 @@ import Recommend from "components/recommend/recommend"//推荐页面
 import Rank from "components/rank/rank"//排行
 import Search from "components/search/search"//搜索
 import Singer from "components/singer/singer"//歌手
+import SingerDetail from "components/singer-detail/singer-detail"//歌手点击后的详情页面
 
 Vue.use(Router)
 
@@ -27,7 +28,13 @@ export default new Router({
     },
     {
       path: '/singer',
-      component:Singer
+      component:Singer,
+      children:[
+        {
+          path:':id',//这里的：就是变量id
+          component:SingerDetail//配置歌手的详情的页面
+        }
+      ]
     }
   ]
 })

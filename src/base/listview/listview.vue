@@ -1,13 +1,13 @@
 <!-- 这是一个类似于通讯录的组件 -->
 <template>
     <Scroll class="listview" :data="data" ref="listview" :listenScroll="listenScroll" @scroll="scroll" :probeType="probeType">
-      <!--歌手这个循环是头部标题的循环-->
+      <!--歌手这个循环是头部标题的循环,selectItem为了传到父元素-->
       <ul>
         <li class="list-group" v-for="group in data"ref="listGroup">
           <h2 class="list-group-title">{{group.title}}</h2>
           <!--这是内容的循环-->
           <ul>
-            <li class="list-group-item" v-for="item in group.items">
+            <li @click="selectItem(item)" class="list-group-item" v-for="item in group.items">
               <img v-lazy="item.avatar" class="avatar">
               <span class="name">{{item.name}}</span>
             </li>
@@ -75,6 +75,10 @@ const TITLE_HEIGHT = 30//这是title的高度
     }
   },
   methods:{
+    /*这是选择点击某个歌手后的，传到父元素*/
+    selectItem(item){
+      this.$emit("select",item)
+    },  
     /*获取data-index上的index*/
       onShortcutTouchStart(e){//e就是点击上去的element,getData（el,name,val）的第三参数可以不写
           let anchorIndex = getData(e.target, 'index')//这里的组合是一个字符串
@@ -220,7 +224,7 @@ const TITLE_HEIGHT = 30//这是title的高度
           color: $color-theme
     .list-fixed
       position: absolute
-      top: 0
+      top: -1px
       left: 0
       width: 100%
       .fixed-title

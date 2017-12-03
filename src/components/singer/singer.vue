@@ -1,6 +1,7 @@
 <template>
   <div class="singer">
-   	<Listview :data="singers"></Listview>
+   	<Listview @select="selectSinger" :data="singers"></Listview>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -23,6 +24,12 @@ const HOT_NAME = '热门'
   		this._getSingerList()
   	},
   	methods:{
+      /*详情页面的路由的跳转，就是获得singers的里面id*/
+      selectSinger(singer){
+        this.$router.push({
+          path:`/singer/${singer.id}`
+        })
+      },
   		_getSingerList(){//渲染到页面到数据
   			getSingerList().then((res)=>{
   				if(res.code===ERR_OK){
