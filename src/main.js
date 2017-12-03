@@ -2,6 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import "babel-polyfill"//这是关于es6的补丁
 import Vue from 'vue'
+import store from './store'
 import App from './App'
 import router from './router'//使用路由
 import fastclick from 'fastclick'//这是一个移动端的300ms点击延迟的优化
@@ -16,6 +17,7 @@ Vue.use(VueLazyLoad,{
 
 new Vue({
   el: '#app',
+  store,//初始化
   router,
   render: h => h(App)
 })

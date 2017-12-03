@@ -5,8 +5,18 @@
 </template>
 
 <script>
+/*获取数据*/
+import {mapGetters} from 'vuex'
   export default {
-    
+    computed:{
+      ...mapGetters([
+        /*这里的singer就是getters下的singer,已经取到数据*/
+        'singer'
+      ])
+    },
+    created(){
+      console.log(this.singer)
+    }
   }
 </script>
 

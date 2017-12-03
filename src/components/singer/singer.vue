@@ -1,6 +1,7 @@
 <template>
   <div class="singer">
    	<Listview @select="selectSinger" :data="singers"></Listview>
+    <!-- 必须使用子路由 -->
     <router-view></router-view>
   </div>
 </template>
@@ -10,6 +11,7 @@ import {getSingerList} from "api/singer"
 import {ERR_OK} from "api/config"
 import Singer from 'common/js/singer'
 import Listview from "base/listview/listview"
+import {mapMutations} from 'vuex'//语法调用state方法，Mutations分装
 /*热门取前10条*/
 const HOT_SINGER_LEN = 10
 const HOT_NAME = '热门'
@@ -29,6 +31,8 @@ const HOT_NAME = '热门'
         this.$router.push({
           path:`/singer/${singer.id}`
         })
+        /*对m的数据提交 vuex方法 现在state就有值了传过去了*/
+        this.setSinger(singer)
       },
   		_getSingerList(){//渲染到页面到数据
   			getSingerList().then((res)=>{
@@ -88,7 +92,12 @@ const HOT_NAME = '热门'
   				return a.title.charCodeAt(0) - b.title.charCodeAt(0)
   			})
   			return hot.concat(ret)
-  		}
+  		},
+      /*扩展运算符就是...es6*/
+      ...mapMutations({
+        //这是在做映射对应vuex中的m
+        setSinger:'SET_SINGER'
+      })
   	},
     components:{
       Listview
