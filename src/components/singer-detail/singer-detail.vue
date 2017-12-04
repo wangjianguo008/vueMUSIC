@@ -7,6 +7,8 @@
 <script>
 /*获取数据*/
 import {mapGetters} from 'vuex'
+import {getSingerDetail} from 'api/singer'
+import {ERR_OK} from 'api/config'
   export default {
     computed:{
       ...mapGetters([
@@ -15,7 +17,25 @@ import {mapGetters} from 'vuex'
       ])
     },
     created(){
-      console.log(this.singer)
+      /*这是测试...mapGetters下的singer*/
+      //console.log(this.singer)
+      this._getDetail()
+    },
+    methods:{
+      _getDetail(){
+        /*没有id的情况下自动回到singer*/
+        if(!this.singer.id){
+          this.$router.push({
+            path:"/singer"
+          })
+        }
+        /*getSingerDetail这里有promise,获取歌手详情的数据*/
+        getSingerDetail(this.singer.id).then((res)=>{
+          if(res.code===ERR_OK){
+            console.log(res.data.list)
+          }
+        })
+      }
     }
   }
 </script>
