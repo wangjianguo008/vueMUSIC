@@ -18,7 +18,7 @@
     <!--:data="songs"为了获取内容和高度-->
     <Scroll :data="songs" class="list" ref="list" :probeType="probeType" :listenScroll="listenScroll" @scroll="scroll">
       <div class="song-list-wrapper">
-        <songList :songs="songs"></songList>
+        <songList @select="selectItem" :songs="songs"></songList>
       </div>
       <div v-show="!songs.length" class="loading-container">
         <loading></loading>
@@ -32,6 +32,7 @@ import Scroll from 'base/scroll/scroll'
 import songList from 'base/song-list/song-list'
 import {prefixStyle} from 'common/js/dom'
 import loading from 'base/loading/loading'
+import {mapActions} from 'vuex' //这是调用修改vuex下action的api
 const transform=prefixStyle('transform')
 const backdrop = prefixStyle('backdrop-filter')
 const RESERVED_HEIGHT=40
@@ -88,7 +89,16 @@ const RESERVED_HEIGHT=40
       back(){
         /*利用路由返回*/
         this.$router.back()
-      }
+      },
+      selectItem(item, index) {
+        this.selectPlay({
+          list: this.songs,
+          index
+        })
+      },
+      ...mapActions([
+        "selectPlay"
+      ])
     },
     watch:{
       scrollY(newY){

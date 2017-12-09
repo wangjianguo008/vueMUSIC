@@ -6,16 +6,20 @@
     <keep-alive>
     	<router-view></router-view>
     </keep-alive>
+    <!--为了不影响任何页面的播放所以放到主页面上-->
+    <Player></Player>
   </div>
 </template>
 
 <script>
 import MHeader from "components/m-header/m-header"
 import Tab from "components/tab/tab"
+import Player from 'components/player/player'
 export default {
   components:{
   	MHeader,
-  	Tab
+  	Tab,
+    Player
   }
 }
 </script>

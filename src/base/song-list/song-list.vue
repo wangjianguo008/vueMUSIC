@@ -2,7 +2,7 @@
 <template>
   <div class="song-list">
     <ul>
-     <li class="item" v-for="song in songs">
+     <li class="item" v-for="(song,index) in songs" @click='selectItem(song,index)'>
        <div class="content">
          <h1 class="name">{{song.name}}</h1>
          <!--描述需要连接符就是小篇号的中文-->
@@ -25,6 +25,10 @@
       /*这里的描述需要拼接所以才需要一个方法*/
       getDesc(song){
         return `${song.singer}·${song.album}`
+      },
+      /*为了播放做功能,给父元素传递信息*/
+      selectItem(item,index){
+        this.$emit('select',item,index)
       }
     }
   }

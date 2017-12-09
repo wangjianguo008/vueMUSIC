@@ -6,6 +6,25 @@ const matutaions={
 	/*第一个参数是state.js下的状态，第二就是提交给action的数据*/
 	[types.SET_SINGER](state,singer){
 		state.singer=singer
+	},
+	/*布尔值用flag*/
+	[types.SET_PLAYING_STATE](state,flag){
+		state.playing=flag
+	},
+	[types.SET_FULL_SCREEN](state, flag) {
+	    state.fullScreen = flag
+	},
+	[types.SET_PLAYLIST](state, list) {
+	    state.playlist = list
+	},
+	[types.SET_SEQUENCE_LIST](state, list) {
+	    state.sequenceList = list
+	},
+	[types.SET_PLAY_MODE](state, mode) {
+	    state.mode = mode
+	},
+	[types.SET_CURRENT_INDEX](state, index) {
+	    state.currentIndex = index
 	}
 }
 export default matutaions
