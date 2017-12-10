@@ -33,14 +33,14 @@
             <div class="icon i-left">
               <i class="icon-sequence"></i>
             </div>
-            <div class="icon i-left">
-              <i class="icon-prev"></i>
+            <div class="icon i-left" :class="disableCls">
+              <i @click="prev" class="icon-prev"></i>
             </div>
-            <div class="icon i-center">
+            <div class="icon i-center" :class="disableCls">
               <i :class="playIcon" @click="togglePlaying"></i>
             </div>
-            <div class="icon i-right">
-              <i class="icon-next"></i>
+            <div class="icon i-right" :class="disableCls">
+              <i @click="next" class="icon-next"></i>
             </div>
             <div class="icon i-right">
               <i class="icon icon-not-favorite"></i>
@@ -60,12 +60,19 @@
           <p class="desc" v-html="currentSong.singer"></p>
         </div>
         <div class="control">
+          <i @click.stop="prev" class="icon-prev"></i>
+        </div>
+        <div class="control">
           <i :class="miniIcon" @click.stop="togglePlaying"></i>
+        </div>
+        <div class="control">
+          <i @click.stop="next" class="icon-next"></i>
         </div>
         <div class="control">
           <i class="icon-playlist"></i>
         </div>
-        <audio ref="audio" :src="currentSong.url"></audio>
+        <!-- 两个新的事件canplay（就是准备好了才做下一个事） 和 error（就是可以看报错） -->
+        <audio ref="audio" :src="currentSong.url" @canplay='ready' @error='error'></audio>
       </div>
     </transition>
   </div>
@@ -78,12 +85,19 @@ import animations from 'create-keyframe-animation'
 import {prefixStyle} from 'common/js/dom'
 const transform=prefixStyle('transform')
   export default{
+    data(){
+      return {
+        /*这是为了不让点击下一首或上一首过快，标志位*/
+        songReady:false
+      }
+    },
     computed:{
       ...mapGetters([
         'fullScreen',/*全屏选择*/
         'playlist',
         'currentSong',//从musiclist传过来的
-        'playing'
+        'playing',
+        'currentIndex'
       ]),
       /*大播放器的播放和暂停*/
       playIcon(){
@@ -96,6 +110,10 @@ const transform=prefixStyle('transform')
       /*图片的旋转*/
       cdclass(){
         return this.playing? 'play' : 'play pause'
+      },
+      /*发生错误，如网络*/
+      disableCls(){
+        return this.songReady? '' : 'disable'
       }
     },
     methods:{
@@ -108,7 +126,8 @@ const transform=prefixStyle('transform')
       /*不能直接修改this.fullScreen为false，不起作用，只能修改mapMutations({})后才能起作用*/
       ...mapMutations({
         setFullScreen:'SET_FULL_SCREEN',
-        setPlayingState:'SET_PLAYING_STATE'
+        setPlayingState:'SET_PLAYING_STATE',
+        setCurrentIndex:'SET_CURRENT_INDEX'
       }),
       /*动画的钩子动画,参数done执行的时候会到after中*/
       enter(el,done){
@@ -185,7 +204,49 @@ const transform=prefixStyle('transform')
         }
       },
       togglePlaying(){
+        /*没有准备好就不能点击*/
+        if(!this.songReady){
+          return
+        }
         this.setPlayingState(!this.playing)
+      },
+      /*下一首歌*/
+      next(){
+        if(!this.songReady){
+          return
+        }
+        let index=this.currentIndex+1
+        if(index===this.playlist.length){
+          index=0
+        }
+        this.setCurrentIndex(index)
+        /*可以解决切换下一首播放按钮个的状态*/
+        if(!this.playing){
+          this.togglePlaying()
+        }
+        this.songReady=false
+      },
+      /*上一首歌*/
+      prev(){
+        if(!this.songReady){
+          return
+        }
+        let index=this.currentIndex-1
+        if(index===-1){
+          index=this.playlist.length-1
+        }
+        this.setCurrentIndex(index)
+        if(!this.playing){
+          this.togglePlaying()
+        }
+        this.songReady=false
+      },
+      ready(){
+        this.songReady=true
+      },
+      /*加载失败的方法*/
+      error(){
+        this.songReady=true
       }
     },
     watch:{
@@ -431,7 +492,7 @@ const transform=prefixStyle('transform')
         flex: 0 0 30px
         width: 30px
         padding: 0 10px
-        .icon-play-mini, .icon-pause-mini, .icon-playlist
+        .icon-play-mini, .icon-pause-mini, .icon-playlist,.icon-next,.icon-prev
           font-size: 30px
           color: $color-theme-d
         .icon-mini
