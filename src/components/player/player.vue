@@ -22,7 +22,7 @@
         <div class="middle">
           <div class="middle-l">
             <div class="cd-wrapper" ref='cdWrapper'>
-              <div class="cd">
+              <div class="cd" :class="cdclass">
                 <img class="image" :src="currentSong.image">
               </div>
             </div>
@@ -37,7 +37,7 @@
               <i class="icon-prev"></i>
             </div>
             <div class="icon i-center">
-              <i class="icon-play"></i>
+              <i :class="playIcon" @click="togglePlaying"></i>
             </div>
             <div class="icon i-right">
               <i class="icon-next"></i>
@@ -53,17 +53,19 @@
       <!--这是min的播放器-->
       <div class="mini-player" v-show="!fullScreen" @click="open">
         <div class="icon">
-          <img width="40" height="40" :src="currentSong.image">
+          <img width="40" height="40" :src="currentSong.image" :class='cdclass'>
         </div>
         <div class="text">
           <h2 class="name" v-html="currentSong.name"></h2>
           <p class="desc" v-html="currentSong.singer"></p>
         </div>
         <div class="control">
+          <i :class="miniIcon" @click.stop="togglePlaying"></i>
         </div>
         <div class="control">
           <i class="icon-playlist"></i>
         </div>
+        <audio ref="audio" :src="currentSong.url"></audio>
       </div>
     </transition>
   </div>
@@ -80,8 +82,21 @@ const transform=prefixStyle('transform')
       ...mapGetters([
         'fullScreen',/*全屏选择*/
         'playlist',
-        'currentSong'//从musiclist传过来的
-      ])
+        'currentSong',//从musiclist传过来的
+        'playing'
+      ]),
+      /*大播放器的播放和暂停*/
+      playIcon(){
+        return this.playing? 'icon-pause' : 'icon-play'
+      },
+      /*小播放器的播放和暂停*/
+      miniIcon(){
+        return this.playing? 'icon-pause-mini' : 'icon-play-mini'
+      },
+      /*图片的旋转*/
+      cdclass(){
+        return this.playing? 'play' : 'play pause'
+      }
     },
     methods:{
       back(){
@@ -92,7 +107,8 @@ const transform=prefixStyle('transform')
       },
       /*不能直接修改this.fullScreen为false，不起作用，只能修改mapMutations({})后才能起作用*/
       ...mapMutations({
-        setFullScreen:'SET_FULL_SCREEN'
+        setFullScreen:'SET_FULL_SCREEN',
+        setPlayingState:'SET_PLAYING_STATE'
       }),
       /*动画的钩子动画,参数done执行的时候会到after中*/
       enter(el,done){
@@ -167,6 +183,23 @@ const transform=prefixStyle('transform')
           y,
           scale
         }
+      },
+      togglePlaying(){
+        this.setPlayingState(!this.playing)
+      }
+    },
+    watch:{
+      currentSong(){
+        this.$nextTick(()=>{
+          /*audio自带的api---play()*/
+          this.$refs.audio.play()
+        })
+      },
+      playing(newPlaying){
+        const audio=this.$refs.audio
+        this.$nextTick(()=>{//不加则会报The play() request was interrupted by a new load request错
+           newPlaying? audio.play() : audio.pause()
+        })
       }
     }
   }
