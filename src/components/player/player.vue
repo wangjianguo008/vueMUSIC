@@ -1,66 +1,80 @@
 <template>
   <div class="player" v-show="playlist.length>0">
-    <!--这是展开的播放器--> 
-    <div class="normal-player" v-show="fullScreen">
-      <div class="background">
-        <img width="100%" height="100%" :src="currentSong.image">
-      </div>
-      <div class="top">
-        <div class="back" @click="back">
-          <i class="icon-back"></i>
+    <!--动画的钩子函数-->
+    <transition name="normal"
+                @enter="enter"
+                @after-enter="afterEnter"
+                @leave="leave"
+                @after-leave="afterLeave"
+    >
+      <!--这是展开的播放器--> 
+      <div class="normal-player" v-show="fullScreen">
+        <div class="background">
+          <img width="100%" height="100%" :src="currentSong.image">
         </div>
-        <h1 class="title" v-html="currentSong.name"></h1>
-        <h2 class="subtitle" v-html="currentSong.singer"></h2>
-      </div>
-      <div class="middle">
-        <div class="middle-l">
-          <div class="cd-wrapper">
-            <div class="cd">
-              <img class="image" :src="currentSong.image">
+        <div class="top">
+          <div class="back" @click="back">
+            <i class="icon-back"></i>
+          </div>
+          <h1 class="title" v-html="currentSong.name"></h1>
+          <h2 class="subtitle" v-html="currentSong.singer"></h2>
+        </div>
+        <div class="middle">
+          <div class="middle-l">
+            <div class="cd-wrapper" ref='cdWrapper'>
+              <div class="cd">
+                <img class="image" :src="currentSong.image">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom">
+          <div class="operators">
+            <div class="icon i-left">
+              <i class="icon-sequence"></i>
+            </div>
+            <div class="icon i-left">
+              <i class="icon-prev"></i>
+            </div>
+            <div class="icon i-center">
+              <i class="icon-play"></i>
+            </div>
+            <div class="icon i-right">
+              <i class="icon-next"></i>
+            </div>
+            <div class="icon i-right">
+              <i class="icon icon-not-favorite"></i>
             </div>
           </div>
         </div>
       </div>
-      <div class="bottom">
-        <div class="operators">
-          <div class="icon i-left">
-            <i class="icon-sequence"></i>
-          </div>
-          <div class="icon i-left">
-            <i class="icon-prev"></i>
-          </div>
-          <div class="icon i-center">
-            <i class="icon-play"></i>
-          </div>
-          <div class="icon i-right">
-            <i class="icon-next"></i>
-          </div>
-          <div class="icon i-right">
-            <i class="icon icon-not-favorite"></i>
-          </div>
+    </transition>
+    <transition name="mini">
+      <!--这是min的播放器-->
+      <div class="mini-player" v-show="!fullScreen" @click="open">
+        <div class="icon">
+          <img width="40" height="40" :src="currentSong.image">
+        </div>
+        <div class="text">
+          <h2 class="name" v-html="currentSong.name"></h2>
+          <p class="desc" v-html="currentSong.singer"></p>
+        </div>
+        <div class="control">
+        </div>
+        <div class="control">
+          <i class="icon-playlist"></i>
         </div>
       </div>
-    </div>
-    <!--这是min的播放器-->
-    <div class="mini-player" v-show="!fullScreen" @click="open">
-      <div class="icon">
-        <img width="40" height="40" :src="currentSong.image">
-      </div>
-      <div class="text">
-        <h2 class="name" v-html="currentSong.name"></h2>
-        <p class="desc" v-html="currentSong.singer"></p>
-      </div>
-      <div class="control">
-      </div>
-      <div class="control">
-        <i class="icon-playlist"></i>
-      </div>
-    </div>
+    </transition>
   </div>
 </template>
 
 <script>
 import {mapGetters,mapMutations} from 'vuex'
+/*这是一个可以做c3动画的一个js的npm插件*/
+import animations from 'create-keyframe-animation'
+import {prefixStyle} from 'common/js/dom'
+const transform=prefixStyle('transform')
   export default{
     computed:{
       ...mapGetters([
@@ -79,7 +93,81 @@ import {mapGetters,mapMutations} from 'vuex'
       /*不能直接修改this.fullScreen为false，不起作用，只能修改mapMutations({})后才能起作用*/
       ...mapMutations({
         setFullScreen:'SET_FULL_SCREEN'
-      })
+      }),
+      /*动画的钩子动画,参数done执行的时候会到after中*/
+      enter(el,done){
+        const {x,y,scale}=this._getPosAndScale()
+        /*从小到大*/
+        let animation={
+          0:{
+            transform:`translate3d(${x}px,${y}px,0) scale(${scale})`
+          },
+          60: {
+            transform: `translate3d(0,0,0) scale(1.1)`
+          },
+          100: {
+            transform: `translate3d(0,0,0) scale(1)`
+          }
+        }
+        // 注册动画
+        animations.registerAnimation({
+          name: 'move',
+          // 插入自定义的动画
+          animation,
+          // 参数配置
+          presets: {
+            duration:400, // 持续时间
+            easing: 'linear'// 过度效果
+            /*delay: 500, // 延迟时间
+            terations: 1, // 实现动画的次数
+        　　delay: 0, // 延迟 
+        　　direction: 'normal', // 方向
+        　　resetWhenDone: false, // if true ：将最后动画状态应用为“变换”属性
+        　　clearTransformsBeforeStart: false // 是否在动画开始之前清除现有的转换*/
+          }
+        })
+        /*开跑*/
+        animations.runAnimation(this.$refs.cdWrapper, 'move', done)
+      },
+      afterEnter(){
+        /*取消动画*/
+        animations.unregisterAnimation('move')
+        this.$refs.cdWrapper.style.animation=''
+      },
+      leave(el,done){
+        const {x, y, scale} = this._getPosAndScale()
+        this.$refs.cdWrapper.style.transition = 'all 0.4s'
+        this.$refs.cdWrapper.style[transform] = `translate3d(${x}px,${y}px,0) scale(${scale})`
+        /*动画结束就是transitionend*/
+        this.$refs.cdWrapper.addEventListener('transitionend', done)
+      },
+      afterLeave(){
+        this.$refs.cdWrapper.style.transition = ''
+        this.$refs.cdWrapper.style[transform] = ''
+      },
+      /*获取两个图的位置和缩放的尺寸（都是计算的中心点）*/
+      _getPosAndScale(){
+        /*底部小圆的width*/
+        const tragetWidth=40
+        /*底部小圆的中心到最左端的距离*/
+        const paddingLeft=40
+        /*底部小圆的中心到最底部的距离*/
+        const paddingBottom=30
+        /*大圆中心到上边的距离*/
+        const paddingTop=80
+        /*width的计算大图大小*/
+        const width=window.innerWidth*0.8
+        /*缩放的比例公式*/
+        const scale=tragetWidth/width
+        /*按left和top的移动来算正负*/
+        const x=-(window.innerWidth/2-paddingLeft)
+        const y=window.innerHeight-paddingTop-paddingBottom-width/2
+        return {
+          x,
+          y,
+          scale
+        }
+      }
     }
   }
 </script>
