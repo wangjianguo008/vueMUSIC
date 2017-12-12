@@ -29,6 +29,16 @@
           </div>
         </div>
         <div class="bottom">
+          <!-- 进度条 -->
+          <div class="progress-wrapper">
+            <span class="time time-l">{{format(currentTime)}}</span>
+            <div class="progress-bar-wrapper">
+              <!--子传到父的方法要用@name-->
+              <ProgressBar :percent="percent" @percentChange='onProgressBarChange'></ProgressBar>
+            </div>
+            <span class="time time-r">{{format(currentSong.duration)}}</span>
+          </div>
+          <!-- 播放器 -->
           <div class="operators">
             <div class="icon i-left">
               <i class="icon-sequence"></i>
@@ -71,8 +81,8 @@
         <div class="control">
           <i class="icon-playlist"></i>
         </div>
-        <!-- 两个新的事件canplay（就是准备好了才做下一个事） 和 error（就是可以看报错） -->
-        <audio ref="audio" :src="currentSong.url" @canplay='ready' @error='error'></audio>
+        <!-- 两个新的事件canplay（就是准备好了才做下一个事） 和 error（就是可以看报错） 监听时间的事件timeupdate，可以查看到时间的走动当前的时间-->
+        <audio ref="audio" :src="currentSong.url" @canplay='ready' @error='error' @timeupdate="updateTime"></audio>
       </div>
     </transition>
   </div>
@@ -83,12 +93,15 @@ import {mapGetters,mapMutations} from 'vuex'
 /*这是一个可以做c3动画的一个js的npm插件*/
 import animations from 'create-keyframe-animation'
 import {prefixStyle} from 'common/js/dom'
+import ProgressBar from 'base/progress-bar/progress-bar'//进度条
 const transform=prefixStyle('transform')
   export default{
     data(){
       return {
         /*这是为了不让点击下一首或上一首过快，标志位*/
-        songReady:false
+        songReady:false,
+        /*设置一个当前时间*/
+        currentTime:0
       }
     },
     computed:{
@@ -114,6 +127,10 @@ const transform=prefixStyle('transform')
       /*发生错误，如网络*/
       disableCls(){
         return this.songReady? '' : 'disable'
+      },
+      /*计算进度条的百分比*/
+      percent(){
+        return this.currentTime/this.currentSong.duration
       }
     },
     methods:{
@@ -247,6 +264,35 @@ const transform=prefixStyle('transform')
       /*加载失败的方法*/
       error(){
         this.songReady=true
+      },
+      /*主要事件是timeupdate*/
+      updateTime(e){
+        this.currentTime=e.target.currentTime
+      },
+      /*时间的转化方法*/
+      format(interval){
+        interval=interval | 0 //向下取整
+        const minute=interval/60 | 0
+        const second=this._pad(interval%60 | 0 )//余数
+        return `${minute}:${second}`
+      },
+      /*n就是几位数做判断，添加0,totoString转化成字符串*/
+      _pad(num,n=2){
+        let len=num.toString().length
+        while(len<n){
+          num='0'+num
+          len++
+        }
+        return num
+      },
+      /*这是进度条传过来的距离计算百分比，反过来的一个时间换算*/
+      onProgressBarChange(percent){
+        const currentTime=this.currentSong.duration*percent
+        this.$refs.audio.currentTime=currentTime
+        /*这是解决拖动时候播放状态*/
+        if(!this.playing){
+          this.togglePlaying()
+        }
       }
     },
     watch:{
@@ -262,6 +308,9 @@ const transform=prefixStyle('transform')
            newPlaying? audio.play() : audio.pause()
         })
       }
+    },
+    components:{
+      ProgressBar
     }
   }
 </script>
