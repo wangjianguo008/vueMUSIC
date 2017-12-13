@@ -73,7 +73,10 @@
           <i @click.stop="prev" class="icon-prev"></i>
         </div>
         <div class="control">
-          <i :class="miniIcon" @click.stop="togglePlaying"></i>
+          <ProgressCircle :radius='radius' :percent='percent'>
+            <!-- i标签就是插入到solt中了 -->
+            <i :class="miniIcon" class="icon-mini" @click.stop="togglePlaying"></i>
+          </ProgressCircle>
         </div>
         <div class="control">
           <i @click.stop="next" class="icon-next"></i>
@@ -94,6 +97,7 @@ import {mapGetters,mapMutations} from 'vuex'
 import animations from 'create-keyframe-animation'
 import {prefixStyle} from 'common/js/dom'
 import ProgressBar from 'base/progress-bar/progress-bar'//进度条
+import ProgressCircle from 'base/progress-circle/progress-circle'//圆形进度条
 const transform=prefixStyle('transform')
   export default{
     data(){
@@ -101,7 +105,8 @@ const transform=prefixStyle('transform')
         /*这是为了不让点击下一首或上一首过快，标志位*/
         songReady:false,
         /*设置一个当前时间*/
-        currentTime:0
+        currentTime:0,
+        radius:32
       }
     },
     computed:{
@@ -310,7 +315,8 @@ const transform=prefixStyle('transform')
       }
     },
     components:{
-      ProgressBar
+      ProgressBar,
+      ProgressCircle
     }
   }
 </script>
