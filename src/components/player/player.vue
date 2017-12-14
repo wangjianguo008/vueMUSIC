@@ -40,8 +40,8 @@
           </div>
           <!-- 播放器 -->
           <div class="operators">
-            <div class="icon i-left">
-              <i class="icon-sequence"></i>
+            <div class="icon i-left" @click="changeMode">
+              <i :class="iconMode"></i>
             </div>
             <div class="icon i-left" :class="disableCls">
               <i @click="prev" class="icon-prev"></i>
@@ -98,6 +98,8 @@ import animations from 'create-keyframe-animation'
 import {prefixStyle} from 'common/js/dom'
 import ProgressBar from 'base/progress-bar/progress-bar'//进度条
 import ProgressCircle from 'base/progress-circle/progress-circle'//圆形进度条
+import {playMode} from 'common/js/config'
+
 const transform=prefixStyle('transform')
   export default{
     data(){
@@ -115,7 +117,8 @@ const transform=prefixStyle('transform')
         'playlist',
         'currentSong',//从musiclist传过来的
         'playing',
-        'currentIndex'
+        'currentIndex',
+        'mode'
       ]),
       /*大播放器的播放和暂停*/
       playIcon(){
@@ -136,6 +139,9 @@ const transform=prefixStyle('transform')
       /*计算进度条的百分比*/
       percent(){
         return this.currentTime/this.currentSong.duration
+      },
+      iconMode(){
+        return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
       }
     },
     methods:{
@@ -149,7 +155,8 @@ const transform=prefixStyle('transform')
       ...mapMutations({
         setFullScreen:'SET_FULL_SCREEN',
         setPlayingState:'SET_PLAYING_STATE',
-        setCurrentIndex:'SET_CURRENT_INDEX'
+        setCurrentIndex:'SET_CURRENT_INDEX',
+        setPlayMode:'SET_PLAY_MODE'
       }),
       /*动画的钩子动画,参数done执行的时候会到after中*/
       enter(el,done){
@@ -298,6 +305,14 @@ const transform=prefixStyle('transform')
         if(!this.playing){
           this.togglePlaying()
         }
+      },
+      changeMode(){
+        const mode=(this.mode+1)%3
+        this.setPlayMode(mode)
+       /* let list=null
+        if(){
+
+        }*/
       }
     },
     watch:{
