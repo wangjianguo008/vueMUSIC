@@ -4,7 +4,7 @@
     <svg :width="radius" :height="radius" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
       <!--内层的圆r半径 cx和cy是圆心坐标 fill描边 stroke-dasharray描边距离 stroke-dashoffset描边偏移-->
       <circle class="progress-background" r="50" cx="50" cy="50" fill="transparent"/>
-      <!--外层的圆-->
+      <!--外层的圆 stroke-dasharray这是线段的长度 stroke-dashoffset这是控制线段的动态 -->
       <circle class="progress-bar" r="50" cx="50" cy="50" fill="transparent" :stroke-dasharray="dashArray"
               :stroke-dashoffset="dashOffset"/>
     </svg>
