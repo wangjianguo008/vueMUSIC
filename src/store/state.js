@@ -9,7 +9,7 @@ const state={
 	fullScreen:false,
 	/*播放的列表*/
 	playlist:[],
-	/*点开小型播放器的歌曲列表*/
+	/*点开小型播放器的歌曲列表，储存列表*/
 	sequenceList:[],
 	/*播放模式*/
 	mode:playMode.sequence,

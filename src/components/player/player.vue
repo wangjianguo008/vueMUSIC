@@ -61,8 +61,8 @@
     </transition>
     <transition name="mini">
       <!--这是min的播放器-->
-      <div class="mini-player" v-show="!fullScreen" @click="open">
-        <div class="icon">
+      <div class="mini-player" v-show="!fullScreen">
+        <div class="icon" @click="open">
           <img width="40" height="40" :src="currentSong.image" :class='cdclass'>
         </div>
         <div class="text">
@@ -85,7 +85,7 @@
           <i class="icon-playlist"></i>
         </div>
         <!-- 两个新的事件canplay（就是准备好了才做下一个事） 和 error（就是可以看报错） 监听时间的事件timeupdate，可以查看到时间的走动当前的时间-->
-        <audio ref="audio" :src="currentSong.url" @canplay='ready' @error='error' @timeupdate="updateTime"></audio>
+        <audio ref="audio" :src="currentSong.url" @canplay='ready' @error='error' @timeupdate="updateTime" @ended='end'></audio>
       </div>
     </transition>
   </div>
@@ -99,6 +99,7 @@ import {prefixStyle} from 'common/js/dom'
 import ProgressBar from 'base/progress-bar/progress-bar'//进度条
 import ProgressCircle from 'base/progress-circle/progress-circle'//圆形进度条
 import {playMode} from 'common/js/config'
+import {shuffle} from 'common/js/util'
 
 const transform=prefixStyle('transform')
   export default{
@@ -118,7 +119,8 @@ const transform=prefixStyle('transform')
         'currentSong',//从musiclist传过来的
         'playing',
         'currentIndex',
-        'mode'
+        'mode',
+        'sequenceList'//歌曲的一个集合
       ]),
       /*大播放器的播放和暂停*/
       playIcon(){
@@ -156,7 +158,8 @@ const transform=prefixStyle('transform')
         setFullScreen:'SET_FULL_SCREEN',
         setPlayingState:'SET_PLAYING_STATE',
         setCurrentIndex:'SET_CURRENT_INDEX',
-        setPlayMode:'SET_PLAY_MODE'
+        setPlayMode:'SET_PLAY_MODE',
+        setPlayList:'SET_PLAYLIST'
       }),
       /*动画的钩子动画,参数done执行的时候会到after中*/
       enter(el,done){
@@ -239,6 +242,19 @@ const transform=prefixStyle('transform')
         }
         this.setPlayingState(!this.playing)
       },
+      /*歌曲结束后设置audio的ended事件*/
+      end(){
+        if(this.mode === playMode.loop){
+          this.loop()
+        }else{
+          this.next()
+        }        
+      },
+      /*循环*/
+      loop(){
+        this.$refs.audio.currentTime=0
+        this.$refs.audio.play()
+      },
       /*下一首歌*/
       next(){
         if(!this.songReady){
@@ -309,14 +325,31 @@ const transform=prefixStyle('transform')
       changeMode(){
         const mode=(this.mode+1)%3
         this.setPlayMode(mode)
-       /* let list=null
-        if(){
-
-        }*/
+        let list=null
+        if(mode===playMode.random){
+          /*进行歌曲的洗牌随机的列表*/
+          list=shuffle(this.sequenceList)
+          console.log(list)
+        }else{
+          list=this.sequenceList
+        }
+        this.resetCurrentIndex(list)
+        this.setPlayList(list)
+      },
+      /*为了currentsong下的index动id不变*/
+      resetCurrentIndex(list){
+        /*findIndex这是es6语法*/
+        let index=list.findIndex((item)=>{
+          return item.id===this.currentSong.id
+        })
+        this.setCurrentIndex(index)
       }
     },
     watch:{
-      currentSong(){
+      currentSong(newSong,oldSong){
+        if(newSong.id===oldSong.id){
+          return
+        }
         this.$nextTick(()=>{
           /*audio自带的api---play()*/
           this.$refs.audio.play()
