@@ -48,7 +48,7 @@ import MusicList from "components/music-list/music-list"
           if(res.code===ERR_OK){
             //console.log(res.data.list)
             this.songs=this._normalizeSongs(res.data.list)
-            console.log(this.songs)
+            //console.log(this.songs)
           }
         })
       },

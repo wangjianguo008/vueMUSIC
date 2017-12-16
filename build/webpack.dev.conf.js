@@ -54,6 +54,29 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         }).catch((err)=>{
           console.log(err)
         })
+      }),
+      apiRoutes.get('/api/lyric',function (req, res) {
+        var url='https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
+        /*params和url一起发送的参数；headers可以设置头部*/
+        axios.get(url,{
+          headers:{
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params:req.query//req.query获得数据
+        }).then((response)=>{
+          var ret = response.data
+          if (typeof ret === 'string') {
+            var reg = /^\w+\(({[^()]+})\)$/
+            var matches = ret.match(reg)
+            if (matches) {
+              ret = JSON.parse(matches[1])
+            }
+          }
+          res.json(ret)
+        }).catch((err)=>{
+          console.log(err)
+        })
       })
     }
   },

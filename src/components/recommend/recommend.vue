@@ -1,5 +1,5 @@
 <template>
-  <div class="recommend">
+  <div class="recommend" ref='recommend'>
     <!--我们在打开页码的时候，开始渲染是没有高度的，没有数据的，而scroll实在mounted的方法下，所以就滚动不了
       所以我们可以给他加data方法让他有数据，数据不为null，discList在轮播后加载，所以会撑开内容的高度
       所以就可以实现向上滚动了，还有就是加以一个div将轮播和内容全部抱在一起，父用子元素方法时候可以使用
@@ -9,7 +9,8 @@
         <div class="slider-wrapper" v-if="recommends.length">
           <Slider>
             <div v-for="item in recommends">
-              <a :href="item.linkUrl">
+              <!--:href="item.linkUrl"-->
+              <a>
                 <!--fastclick是npm模块绑定在body身上，现在监听到needClick时候才会有点击效果-->
                 <img class="needClick" :src="item.picUrl" @load="loadImgage">
               </a>
@@ -46,7 +47,9 @@ import {getRecomment,getDiscList} from "api/recommend"
 import {ERR_OK} from "api/config"
 import Scroll from "base/scroll/scroll"
 import Loading from "base/loading/loading"
+import {playlistMixin} from 'common/js/mixin'
   export default{
+    mixins: [playlistMixin],
     data(){
       return {
         recommends:[],
@@ -64,6 +67,11 @@ import Loading from "base/loading/loading"
       this._getDiscList()//歌单数据
   	},
   	methods:{
+      handlePlaylist(playlist) {
+        const bottom = playlist.length > 0 ? '60px' : ''
+        this.$refs.recommend.style.bottom = bottom
+        this.$refs.scroll.refresh()
+      },
   		/*获取轮播的数据*/
   		_getRecomment(){
   			/*getRecomment已经是promise了*/

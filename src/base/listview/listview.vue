@@ -109,6 +109,9 @@ const TITLE_HEIGHT = 30//这是title的高度
          /*左侧对应的索引，滚动到对应的element*/
         this.$refs.listview.scrollToElement(this.$refs.listGroup[index],0)
       },
+      refresh() {
+        this.$refs.listview.refresh()
+      },
       scroll(pos){
         /*为了监听到better-scroll的y距离*/
         this.scrollY=pos.y

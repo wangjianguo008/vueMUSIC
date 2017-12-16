@@ -1,6 +1,6 @@
 <template>
-  <div class="singer">
-   	<Listview @select="selectSinger" :data="singers"></Listview>
+  <div class="singer" ref='singer'>
+   	<Listview @select="selectSinger" :data="singers" ref='list'></Listview>
     <!-- 必须使用子路由 -->
     <router-view></router-view>
   </div>
@@ -12,10 +12,12 @@ import {ERR_OK} from "api/config"
 import Singer from 'common/js/singer'
 import Listview from "base/listview/listview"
 import {mapMutations} from 'vuex'//语法调用state方法，Mutations分装
+import {playlistMixin} from 'common/js/mixin'
 /*热门取前10条*/
 const HOT_SINGER_LEN = 10
 const HOT_NAME = '热门'
   export default {
+    mixins: [playlistMixin],
   	data(){
   		return {
   			singers:[]
@@ -26,6 +28,11 @@ const HOT_NAME = '热门'
   		this._getSingerList()
   	},
   	methods:{
+      handlePlaylist(playlist) {
+        const bottom = playlist.length > 0 ? '60px' : ''
+        this.$refs.singer.style.bottom = bottom
+        this.$refs.list.refresh()
+      },
       /*详情页面的路由的跳转，就是获得singers的里面id*/
       selectSinger(singer){
         this.$router.push({

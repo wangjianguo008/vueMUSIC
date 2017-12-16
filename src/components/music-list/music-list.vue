@@ -33,10 +33,13 @@ import songList from 'base/song-list/song-list'
 import {prefixStyle} from 'common/js/dom'
 import loading from 'base/loading/loading'
 import {mapActions} from 'vuex' //这是调用修改vuex下action的api
+import {playlistMixin} from 'common/js/mixin'
 const transform=prefixStyle('transform')
 const backdrop = prefixStyle('backdrop-filter')
 const RESERVED_HEIGHT=40
   export default{
+    /*这vue语法可以引用公用方法里面的代码,同名可以覆盖*/
+    mixins: [playlistMixin],
     props:{
       /*从父元素传过来的数据*/
       bgImage:{
@@ -82,6 +85,11 @@ const RESERVED_HEIGHT=40
       loading
     },
     methods:{
+      handlePlaylist(playlist) {
+        const bottom = playlist.length > 0 ? '60px' : ''
+        this.$refs.list.$el.style.bottom = bottom
+        this.$refs.list.refresh()
+      },
       /*做监听scroll滚动了多少，赋值给this.scrollY*/
       scroll(pos){
         this.scrollY=pos.y
