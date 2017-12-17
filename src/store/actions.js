@@ -1,4 +1,4 @@
-/*异步的封装，对mutation多次修改的修改*/
+/*异步的封装，对多个mutation修改*/
 import * as types from './mutation-types'
 import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/util'

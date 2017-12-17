@@ -20,7 +20,7 @@
         <div class="recommend-list">
           <h1 class="list-title">热门歌单推荐</h1>
           <ul>
-            <li class="item" v-for="item in discList">
+            <li class="item" v-for="item in discList" @click="selectItem(item)">
               <div class="icon">
                 <!--:src="item.imgurl"这是赖加载模块的功能-->
                 <img  width="60" height="60" v-lazy="item.imgurl">
@@ -38,6 +38,8 @@
         </div>
       </div>
     </Scroll>
+    <!--跳转disc首页歌单-->
+    <router-view></router-view>
   </div>
 </template>
 
@@ -48,6 +50,7 @@ import {ERR_OK} from "api/config"
 import Scroll from "base/scroll/scroll"
 import Loading from "base/loading/loading"
 import {playlistMixin} from 'common/js/mixin'
+import {mapMutations} from 'vuex'
   export default{
     mixins: [playlistMixin],
     data(){
@@ -95,7 +98,17 @@ import {playlistMixin} from 'common/js/mixin'
           this.$refs.scroll.refresh()
           this.checkloaded=true
         }
-      }
+      },
+      /*以下就是歌曲选择首页*/
+      selectItem(item){
+        this.$router.push({
+          path:`/recommend/${item.dissid}`
+        })
+        this.setDisc(item)
+      },
+      ...mapMutations({
+        setDisc: 'SET_DISC'
+      })
   	},
     components:{
       Slider,

@@ -5,6 +5,8 @@ import Rank from "components/rank/rank"//排行
 import Search from "components/search/search"//搜索
 import Singer from "components/singer/singer"//歌手
 import SingerDetail from "components/singer-detail/singer-detail"//歌手点击后的详情页面
+import Disc from 'components/disc/disc'//这是首页下面的热榜的详情
+import TopList from 'components/top-list/top-list'//这是排行榜
 
 Vue.use(Router)
 
@@ -16,11 +18,23 @@ export default new Router({
     },
     {
       path: '/recommend',
-      component:Recommend
+      component:Recommend,
+      children: [
+        {
+          path: ':id',
+          component: Disc
+        }
+      ]
     },
     {
       path: '/rank',
-      component:Rank
+      component:Rank,
+      children:[
+        {
+          path:':id',
+          component:TopList
+        }
+      ]
     },
     {
       path: '/search',

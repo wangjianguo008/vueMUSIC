@@ -77,6 +77,21 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         }).catch((err)=>{
           console.log(err)
         })
+      }),
+      apiRoutes.get('/api/getDisc',function (req, res) {
+        var url='https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
+        /*params和url一起发送的参数；headers可以设置头部*/
+        axios.get(url,{
+          headers:{
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params:req.query//req.query获得数据
+        }).then((response)=>{
+          res.json(response.data)
+        }).catch((err)=>{
+          console.log(err)
+        })
       })
     }
   },

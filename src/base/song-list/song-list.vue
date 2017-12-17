@@ -3,11 +3,15 @@
   <div class="song-list">
     <ul>
      <li class="item" v-for="(song,index) in songs" @click='selectItem(song,index)'>
-       <div class="content">
-         <h1 class="name">{{song.name}}</h1>
-         <!--描述需要连接符就是小篇号的中文-->
-         <p class="desc">{{getDesc(song)}}</p>
-       </div>
+      <!--排行榜使用-->
+      <div class="rank" v-show="rank">
+        <span :class="getRankCls(index)" v-text="getRankText(index)"></span>
+      </div>
+      <div class="content">
+        <h1 class="name">{{song.name}}</h1>
+        <!--描述需要连接符就是小篇号的中文-->
+        <p class="desc">{{getDesc(song)}}</p>
+      </div>
      </li>
     </ul>
   </div>
@@ -19,6 +23,10 @@
       songs:{
         type:Array,
         default:[]
+      },
+      rank: {
+        type: Boolean,
+        default: false
       }
     },
     methods:{
@@ -29,6 +37,21 @@
       /*为了播放做功能,给父元素传递信息*/
       selectItem(item,index){
         this.$emit('select',item,index)
+      },
+      /*排行榜使用*/
+      /*图标*/
+      getRankCls(index) {
+        if (index <= 2) {
+          return `icon icon${index}`
+        } else {
+          return 'text'
+        }
+      },
+      /*文字*/
+      getRankText(index) {
+        if (index > 2) {
+          return index + 1
+        }
       }
     }
   }

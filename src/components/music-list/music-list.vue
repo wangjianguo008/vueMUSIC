@@ -18,7 +18,7 @@
     <!--:data="songs"为了获取内容和高度-->
     <Scroll :data="songs" class="list" ref="list" :probeType="probeType" :listenScroll="listenScroll" @scroll="scroll">
       <div class="song-list-wrapper">
-        <songList @select="selectItem" :songs="songs"></songList>
+        <songList @select="selectItem" :songs="songs" :rank="rank"></songList>
       </div>
       <div v-show="!songs.length" class="loading-container">
         <loading></loading>
@@ -53,6 +53,10 @@ const RESERVED_HEIGHT=40
       title:{
         type:String,
         default:''
+      },
+      rank: {
+        type: Boolean,
+        default: false
       }
     },
     computed:{

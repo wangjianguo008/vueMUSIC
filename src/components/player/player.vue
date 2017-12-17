@@ -1,3 +1,4 @@
+<!-- App.vue -->
 <template>
   <div class="player" v-show="playlist.length>0">
     <!--动画的钩子函数-->
@@ -378,7 +379,7 @@ const transitionDuration = prefixStyle('transitionDuration')
         if(mode===playMode.random){
           /*进行歌曲的洗牌随机的列表*/
           list=shuffle(this.sequenceList)
-          console.log(list)
+          //console.log(list)
         }else{
           list=this.sequenceList
         }
