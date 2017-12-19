@@ -24,6 +24,14 @@ import BScroll from 'better-scroll'
       listenScroll:{//监听list需要滚动不
         type:Boolean,
         default:false
+      },
+      pullup: {//向下滚动刷新数据
+        type: Boolean,
+        default: false
+      },
+      beforeScroll: {
+        type: Boolean,
+        default: false
       }
     },
     mounted(){
@@ -46,6 +54,20 @@ import BScroll from 'better-scroll'
           let that=this
           this.scroll.on("scroll",(pos)=>{//位置pos有x和y的属性
             that.$emit('scroll',pos)
+          })
+        }
+        /*滚动下拉刷新*/
+        if (this.pullup) {
+          this.scroll.on('scrollEnd', () => {
+            if (this.scroll.y <= (this.scroll.maxScrollY + 50)) {
+              this.$emit('scrollToEnd')
+            }
+          })
+        }
+        /*手机滚动失去焦点*/
+        if (this.beforeScroll) {
+          this.scroll.on('beforeScrollStart', () => {
+            this.$emit('beforeScroll')
           })
         }
       },

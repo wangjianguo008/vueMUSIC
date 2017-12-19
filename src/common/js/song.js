@@ -46,7 +46,7 @@ export function createSong(musicData){
 }
 
 /*因为singer是对象格式问题重做了一个方法*/
-export function filterSinger(singer){
+function filterSinger(singer){
 	let ret=[]
 	if(!singer){
 		return ""
