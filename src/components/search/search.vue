@@ -17,7 +17,7 @@
     	</div>
     </div>
     <div class="search-result" v-show='query'>
-    	<Suggest @listScroll="blurInput" :query='query'></Suggest>
+    	<Suggest @listScroll="blurInput" :query='query' @select="saveSearch"></Suggest>
     </div>
     <router-view></router-view>
   </div>
@@ -28,6 +28,7 @@ import SearchBox from 'base/search-box/search-box'
 import {getHotKey} from 'api/search'
 import {ERR_OK} from 'api/config'
 import Suggest from 'components/suggest/suggest'
+import {mapActions} from 'vuex'
   export default {
   	components: {
       SearchBox,
@@ -43,24 +44,30 @@ import Suggest from 'components/suggest/suggest'
       this._getHotKey()
     },
     methods:{
-	  _getHotKey() {
-	    getHotKey().then((res) => {
-	      if (res.code === ERR_OK) {
-	        this.hotKey = res.data.hotkey.slice(0, 10)
-	        //console.log(res.data.hotkey)
-	      }
-	    })
-	  },
-	  addQuery(query){
-	  	/*子组件写好，可以调用返回这个方法*/
-	  	this.$refs.searchBox.setQuery(query)
-	  },
-	  onQueryChange(query){
-	  	this.query=query
-	  },
-	  blurInput(){
-	  	this.$refs.searchBox.blur()
-	  }
+  	  _getHotKey() {
+  	    getHotKey().then((res) => {
+  	      if (res.code === ERR_OK) {
+  	        this.hotKey = res.data.hotkey.slice(0, 10)
+  	        //console.log(res.data.hotkey)
+  	      }
+  	    })
+  	  },
+  	  addQuery(query){
+  	  	/*子组件写好，可以调用返回这个方法*/
+  	  	this.$refs.searchBox.setQuery(query)
+  	  },
+  	  onQueryChange(query){
+  	  	this.query=query
+  	  },
+  	  blurInput(){
+  	  	this.$refs.searchBox.blur()
+  	  },
+      saveSearch(){
+        this.saveSearchHistory(this.query)
+      },
+      ...mapActions([
+        'saveSearchHistory'
+      ])
     }
   }
 </script>
