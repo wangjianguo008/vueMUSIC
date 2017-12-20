@@ -1,7 +1,7 @@
-/*关于储存的一些数据 有一个存储的npm库*/
+/*关于储存的一些数据 有一个存储的npm存储库*/
 import storage from 'good-storage'
 
-const SEARCH_KEY = '__search__'
+const SEARCH_KEY = '__search__'//搜索的key值
 const SEARCH_MAX_LEN = 15
 
 function insertArray(arr, val, compare, maxLen) {
@@ -29,4 +29,26 @@ export function saveSearch(query) {
 
 export function loadSearch() {
   return storage.get(SEARCH_KEY, [])
+}
+
+function deleteFromArray(arr, compare) {
+  const index = arr.findIndex(compare)
+  if (index > -1) {
+    arr.splice(index, 1)
+  }
+}
+
+export function deleteSearch(query) {
+  /*从原来的数组中删除在保存新的数组*/
+  let searches = storage.get(SEARCH_KEY, [])
+  deleteFromArray(searches, (item) => {
+    return item === query
+  })
+  storage.set(SEARCH_KEY, searches)
+  return searches
+}
+
+export function clearSearch() {
+  storage.remove(SEARCH_KEY)
+  return []
 }

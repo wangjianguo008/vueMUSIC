@@ -144,6 +144,9 @@
       ]),
       listScroll() {
         this.$emit('listScroll')
+      },
+      refresh() {
+        this.$refs.suggest.refresh()
       }
     },
     watch: {
