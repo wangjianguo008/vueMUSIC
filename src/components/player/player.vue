@@ -102,9 +102,10 @@
         <div class="control">
           <i @click.stop="next" class="icon-next"></i>
         </div>
-        <div class="control">
+        <div class="control" @click.stop='showPlaylist'>
           <i class="icon-playlist"></i>
         </div>
+        <playlist ref="playlist"></playlist>
         <!-- 两个新的事件canplay（就是准备好了才做下一个事） 和 error（就是可以看报错） 监听时间的事件timeupdate，可以查看到时间的走动当前的时间-->
         <audio ref="audio" :src="currentSong.url" @canplay='ready' @error='error' @timeupdate="updateTime" @ended='end'></audio>
       </div>
@@ -123,7 +124,7 @@ import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/util'
 import Lyric from 'lyric-parser' //歌词的解析
 import Scroll from 'base/scroll/scroll'
-
+import Playlist from 'components/playlist/playlist'
 const transform=prefixStyle('transform')
 const transitionDuration = prefixStyle('transitionDuration')
   export default{
@@ -472,6 +473,10 @@ const transitionDuration = prefixStyle('transitionDuration')
         this.$refs.middleL.style.opacity = opacity
         this.$refs.middleL.style[transitionDuration] = `${time}ms`
         this.touch.initiated = false
+      },
+      /*min歌曲列表*/
+      showPlaylist(){
+        this.$refs.playlist.show()
       }
     },
     watch:{
@@ -500,7 +505,8 @@ const transitionDuration = prefixStyle('transitionDuration')
     components:{
       ProgressBar,
       ProgressCircle,
-      Scroll
+      Scroll,
+      Playlist
     }
   }
 </script>
