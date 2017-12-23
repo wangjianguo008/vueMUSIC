@@ -74,7 +74,7 @@
               <i @click="next" class="icon-next"></i>
             </div>
             <div class="icon i-right">
-              <i class="icon icon-not-favorite"></i>
+              <i @click="toggleFavorite(currentSong)" class="icon" :class="getFavoriteIcon(currentSong)"></i>
             </div>
           </div>
         </div>
@@ -107,7 +107,7 @@
         </div>
         <playlist ref="playlist"></playlist>
         <!-- 两个新的事件canplay（就是准备好了才做下一个事） 和 error（就是可以看报错） 监听时间的事件timeupdate，可以查看到时间的走动当前的时间-->
-        <audio ref="audio" :src="currentSong.url" @canplay='ready' @error='error' @timeupdate="updateTime" @ended='end'></audio>
+        <audio ref="audio" :src="currentSong.url" @play='ready' @error='error' @timeupdate="updateTime" @ended='end'></audio>
       </div>
     </transition>
   </div>
@@ -402,6 +402,9 @@ const transitionDuration = prefixStyle('transitionDuration')
       /*歌词作用*/
       getLyric(){
         this.currentSong.getLyric().then((lyric)=>{
+          if (this.currentSong.lyric !== lyric) {
+            return
+          }
           this.currentLyric=new Lyric(lyric,this.handleLyric)
           if(this.playing){
             this.currentLyric.play()

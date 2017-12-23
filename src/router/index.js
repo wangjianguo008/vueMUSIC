@@ -7,6 +7,7 @@ import Singer from "components/singer/singer"//歌手
 import SingerDetail from "components/singer-detail/singer-detail"//歌手点击后的详情页面
 import Disc from 'components/disc/disc'//这是首页下面的热榜的详情
 import TopList from 'components/top-list/top-list'//这是排行榜
+import UserCenter from 'components/user-center/user-center'//我的收藏
 
 Vue.use(Router)
 
@@ -55,6 +56,10 @@ export default new Router({
           component:SingerDetail//配置歌手的详情的页面
         }
       ]
+    },
+    {
+      path: '/user',
+      component: UserCenter
     }
   ]
 })
