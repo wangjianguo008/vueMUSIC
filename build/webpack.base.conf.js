@@ -25,6 +25,8 @@ module.exports = {
     alias: {
       "@":resolve("src"),
       "common":resolve("src/common"),
+      "api":resolve("src/api"),
+      "base":resolve("src/base"),
       "components":resolve("src/components")
     }
   },
