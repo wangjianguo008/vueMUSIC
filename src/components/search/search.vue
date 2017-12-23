@@ -5,7 +5,7 @@
     </div>
     <!--搜索的关键词-->
     <div class="shortcut-wrapper" v-show='!query' ref="shortcutWrapper">
-    	<Scroll class="shortcut" :data="shortcut" ref="shortcut">
+    	<Scroll class="shortcut" :data="shortcut" ref="shortcut" :refreshDelay="refreshDelay">
         <div>
           <div class="hot-key">
             <h1 class="title">热门搜索</h1>
@@ -44,9 +44,9 @@ import {mapActions,mapGetters} from 'vuex'
 import SearchList from 'base/search-list/search-list'
 import Confirm from 'base/confirm/confirm'
 import Scroll from 'base/scroll/scroll'
-import {playlistMixin} from 'common/js/mixin'
+import {playlistMixin,searchMixin} from 'common/js/mixin'
   export default {
-    mixins: [playlistMixin],
+    mixins: [playlistMixin,searchMixin],
   	components: {
       SearchBox,
       Suggest,
@@ -56,8 +56,8 @@ import {playlistMixin} from 'common/js/mixin'
     },
     data() {
       return {
-        hotKey: [],
-        query:''
+        hotKey: []
+        /*query:''*/
       }
     },
     created() {
@@ -72,22 +72,22 @@ import {playlistMixin} from 'common/js/mixin'
   	      }
   	    })
   	  },
-  	  addQuery(query){
+  	  //addQuery(query){
   	  	/*子组件写好，可以调用返回这个方法*/
-  	  	this.$refs.searchBox.setQuery(query)
-  	  },
-  	  onQueryChange(query){
+  	  	//this.$refs.searchBox.setQuery(query)
+  	  //},
+  	  /*onQueryChange(query){
   	  	this.query=query
-  	  },
-  	  blurInput(){
+  	  },*/
+  	 /* blurInput(){
   	  	this.$refs.searchBox.blur()
   	  },
       saveSearch(){
         this.saveSearchHistory(this.query)
-      },
+      },*/
       ...mapActions([
-        'saveSearchHistory',
-        "deleteSearchHistory",
+        /*'saveSearchHistory',
+        "deleteSearchHistory",*/
         'clearSearchHistory'
       ]),
       showConfirm(){
@@ -104,9 +104,9 @@ import {playlistMixin} from 'common/js/mixin'
       }
     },
     computed:{
-      ...mapGetters([
+      /*...mapGetters([
         'searchHistory'
-      ]),
+      ]),*/
       shortcut() {
         return this.hotKey.concat(this.searchHistory)
       }

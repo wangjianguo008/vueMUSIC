@@ -1,7 +1,7 @@
 /*所有的状态*/
 /*现在需要传一个歌手的网适口 vuex顺序就是a-m-s传出*/
 import {playMode} from 'common/js/config'
-import {loadSearch} from 'common/js/cache'
+import {loadSearch,loadPlay} from 'common/js/cache'
 const state={
 	singer:{},
 	/*播放的状态*/
@@ -19,6 +19,7 @@ const state={
 	disc: {},
 	/*这是排行榜*/
 	topList: {},
-	searchHistory:loadSearch()
+	searchHistory:loadSearch(),
+	playHistory: loadPlay()
 }
 export default state

@@ -32,6 +32,10 @@ import BScroll from 'better-scroll'
       beforeScroll: {
         type: Boolean,
         default: false
+      },
+      refreshDelay: {
+        type: Number,
+        default: 20
       }
     },
     mounted(){
@@ -93,7 +97,7 @@ import BScroll from 'better-scroll'
       data(){
         setTimeout(()=>{
           this.refresh()
-        },20)
+        },this.refreshDelay)
       }
     }
   }
