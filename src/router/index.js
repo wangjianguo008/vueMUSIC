@@ -10,6 +10,55 @@ import TopList from 'components/top-list/top-list'//这是排行榜
 import UserCenter from 'components/user-center/user-center'//我的收藏
 
 Vue.use(Router)
+/*异步加载为了打包可以小点，加载也快*/
+/*const Recommend = (resolve) => {
+  import('components/recommend/recommend').then((module) => {
+    resolve(module)
+  })
+}
+
+const Singer = (resolve) => {
+  import('components/singer/singer').then((module) => {
+    resolve(module)
+  })
+}
+
+const Rank = (resolve) => {
+  import('components/rank/rank').then((module) => {
+    resolve(module)
+  })
+}
+
+const Search = (resolve) => {
+  import('components/search/search').then((module) => {
+    resolve(module)
+  })
+}
+
+const SingerDetail = (resolve) => {
+  import('components/singer-detail/singer-detail').then((module) => {
+    resolve(module)
+  })
+}
+
+const Disc = (resolve) => {
+  import('components/disc/disc').then((module) => {
+    resolve(module)
+  })
+}
+
+const TopList = (resolve) => {
+  import('components/top-list/top-list').then((module) => {
+    resolve(module)
+  })
+}
+
+const UserCenter = (resolve) => {
+  import('components/user-center/user-center').then((module) => {
+    resolve(module)
+  })
+}*/
+
 
 export default new Router({
   routes: [
